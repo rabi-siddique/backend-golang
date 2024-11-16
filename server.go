@@ -15,6 +15,11 @@ type Response struct {
 	Items   []int
 }
 
+type RequestData struct {
+	Name     string
+	LastName string
+}
+
 func sendData(w http.ResponseWriter, r *http.Request) {
 
 	// Create a response object
@@ -32,9 +37,35 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func submitData(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		var data RequestData
+		decoder := json.NewDecoder(r.Body)
+
+		err := decoder.Decode(&data)
+		if err != nil {
+			http.Error(w, "Error decoding JSON", http.StatusBadRequest)
+			return
+		}
+
+		if data.Name == "" || data.LastName == "" {
+			http.Error(w, "Name or LastName is misisng", http.StatusBadRequest)
+			return
+		}
+
+		fmt.Println("Data Received:", data)
+		fmt.Println("Name", data.Name)
+		fmt.Println("LastName", data.LastName)
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Data successfully received"))
+	}
+}
+
 func main() {
 	http.HandleFunc("/", handleHomeRoute)
 	http.HandleFunc("/data", sendData)
+	http.HandleFunc("/submit-data", submitData)
 
 	fmt.Println("Starting Go server on :8080...")
 	http.ListenAndServe(":8080", nil)
