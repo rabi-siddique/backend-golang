@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -49,6 +50,7 @@ func submitData(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if data.Name == "" || data.LastName == "" {
+			log.Println("Name or LastName is missing")
 			http.Error(w, "Name or LastName is misisng", http.StatusBadRequest)
 			return
 		}
