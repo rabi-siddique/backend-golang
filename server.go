@@ -39,7 +39,7 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 }
 
 func submitData(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		var data RequestData
 		decoder := json.NewDecoder(r.Body)
 
@@ -61,6 +61,9 @@ func submitData(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Data successfully received"))
+	} else {
+		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
+		return
 	}
 }
 
